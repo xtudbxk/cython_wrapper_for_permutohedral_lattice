@@ -110,7 +110,7 @@ class HashTablePermutohedral {
  private:
   /* Grows the size of the hash table */
   void grow() {
-    printf("Resizing hash table\n");
+    //printf("Resizing hash table\n");
 	
     size_t oldCapacity = capacity;
     capacity *= 2;
@@ -405,7 +405,7 @@ class PermutohedralLattice {
 
       // For each of d+1 axes,
       for (int j = 0; j <= d; j++) {
-	printf(" %d", j);fflush(stdout);
+	//printf(" %d", j);fflush(stdout);
 
 	// For each vertex in the lattice,
 	for (int i = 0; i < hashTable.size(); i++) { // blur point i in dimension j
@@ -447,7 +447,7 @@ class PermutohedralLattice {
       } else {
 	delete newValue;
       }
-      printf("\n");
+      //printf("\n");
       
       delete zero;
       delete neighbor1; 
