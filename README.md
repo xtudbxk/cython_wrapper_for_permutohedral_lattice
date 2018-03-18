@@ -6,9 +6,6 @@ This is a cython wrapper for permutohedral lattice algorithm to accelerate the s
 
 ### INSTALL
 
-`./install.sh`
-
-
 
 1. download the git repository
 
