@@ -107,6 +107,11 @@ class HashTablePermutohedral {
     return k;
   }
 
+  ~HashTablePermutohedral(){
+    delete[] entries;
+    delete[] keys;
+    delete[] values;
+  }
  private:
   /* Grows the size of the hash table */
   void grow() {
@@ -228,6 +233,7 @@ class PermutohedralLattice {
     //  printf("%s: %3.3f ms\n", names[i-1], (t[i].tv_sec - t[i-1].tv_sec) +
     //         (t[i].tv_usec - t[i-1].tv_usec)/1000000.0);
     //
+    delete[] col;
     return out;
   }
     
@@ -443,17 +449,27 @@ class PermutohedralLattice {
       // depending where we ended up, we may have to copy data
       if (oldValue != hashTableBase) {
 	memcpy(hashTableBase, oldValue, hashTable.size()*vd*sizeof(float));
-	delete oldValue;
+	delete[] oldValue;
       } else {
-	delete newValue;
+	delete[] newValue;
       }
       //printf("\n");
       
-      delete zero;
-      delete neighbor1; 
-      delete neighbor2;
+      delete[] zero;
+      delete[] neighbor1; 
+      delete[] neighbor2;
     }
     
+    ~PermutohedralLattice(){
+      delete[] elevated;
+      delete[] scaleFactor;
+      delete[] greedy;
+      delete[] rank;
+      delete[] barycentric;
+      delete[] replay;
+      delete[] canonical;
+      delete[] key;
+    }
     private:
 
     int d, vd, nData;

@@ -6,9 +6,11 @@ cdef extern from "src/Image.h":
         int frames,height,width,channels
 
 cdef class pyImage:
-    cdef Image img
+    cdef Image* img
+    cdef int new_count
     cdef Py_ssize_t shape[4]
     cdef Py_ssize_t strides[4]
-    cdef pyImage wrap(self,Image img)
-
-cdef Image MemoryViewToImage(float[:,:,:,::1] mv)
+    cdef pyImage set_img(self,Image img)
+    cdef pyImage set_data(self,float[:,:,:,::1] mv)
+    @staticmethod
+    cdef Image get_img(pyImage pyimg)
