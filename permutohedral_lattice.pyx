@@ -9,6 +9,7 @@ cdef class pyPermutohedralLattice:
         r = PermutohedralLattice.filter(image.pyImage.get_img(a_pyImage),image.pyImage.get_img(b_pyImage))
         r_pyImage = image.pyImage().set_img(r)
         ret = np.asarray(r_pyImage)
+        ret = np.copy(ret,order="C")
         a_pyImage.mydel()
         b_pyImage.mydel()
         return ret
