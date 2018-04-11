@@ -22,6 +22,7 @@ cdef class pyPermutohedralLattice:
         new_b = np.array(b)
         for i in range(mask_num):
             index = np.equal(mask,i)
+            if np.sum(index) <= 0: continue
             new_a_ = np.reshape(new_a[index],(1,1,-1,c_a))
             new_b_ = np.reshape(new_b[index],(1,1,-1,c_b))
             ret_tmp = pyPermutohedralLattice._filter(new_a_,new_b_)
