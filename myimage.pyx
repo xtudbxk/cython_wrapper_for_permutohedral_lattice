@@ -1,5 +1,6 @@
 from cpython cimport Py_buffer
 import numpy as np
+from cimage cimport Image
 
 cdef class pyImage:
     def __cinit__(self):

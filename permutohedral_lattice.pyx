@@ -1,12 +1,16 @@
 import numpy as np
+from cimage cimport Image
+from cpermutohedrallattice cimport PermutohedralLattice
+from cmodified_permutohedral cimport ModifiedPermutohedral
+from myimage cimport pyImage
 
 cdef class pyPermutohedralLattice:
     @staticmethod
     cdef _filter(float[:,:,:,::1] a, float[:,:,:,::1] b):
-        a_pyImage = image.pyImage().set_data(a)
-        b_pyImage = image.pyImage().set_data(b)
-        r = PermutohedralLattice.filter(image.pyImage.get_img(a_pyImage),image.pyImage.get_img(b_pyImage))
-        r_pyImage = image.pyImage().set_img(r)
+        a_pyImage = pyImage().set_data(a)
+        b_pyImage = pyImage().set_data(b)
+        r = PermutohedralLattice.filter(pyImage.get_img(a_pyImage),pyImage.get_img(b_pyImage))
+        r_pyImage = pyImage().set_img(r)
         ret_tmp = np.asarray(r_pyImage)
         ret_tmp = np.copy(ret_tmp,order="C")
         a_pyImage.mydel()
@@ -27,6 +31,45 @@ cdef class pyPermutohedralLattice:
             new_b_ = np.reshape(new_b[index],(1,1,-1,c_b))
             ret_tmp = pyPermutohedralLattice._filter(new_a_,new_b_)
             ret[index] = np.reshape(ret_tmp,(-1,c_a))
+        return ret
+
+    @staticmethod
+    cdef _filter_without_normalization(float[:,:,:,::1] a, float[:,:,:,::1] b):
+        b_a = a.shape[0] # batch_size must be 1
+        h_a = a.shape[1]
+        w_a = a.shape[2]
+        c_a = a.shape[3]
+        c_b = b.shape[3]
+
+        cdef ModifiedPermutohedral l
+        l.init(&b[0,0,0,0],c_b,h_a*w_a)
+        
+        cdef float[::1] data = np.zeros([b_a*h_a*w_a*c_a],np.float32)
+        l.compute(c_a,&data[0],&a[0,0,0,0])
+
+        d = np.copy(data,order="C")
+        return d.reshape([b_a,h_a,w_a,c_a])
+        #return data
+
+    @staticmethod
+    def filter_without_normalization(float[:,:,:,::1] a ,float[:,:,:,::1] b):
+        # a: the matric needs to be filered which shape is [batch_size,:,:,:]. b: the feature matric, which shape is [batch_size,:,:,:]
+        batch_size = a.shape[0]
+        h = a.shape[1]
+        w = a.shape[2]
+        c_a = a.shape[3]
+        c_b = b.shape[3]
+        ret = None
+        for i in range(batch_size):
+            if b.shape[0] == batch_size:
+                j = i
+            else:
+                j = 0
+            ret_tmp = pyPermutohedralLattice._filter_without_normalization(np.reshape(a[i,:,:,:],(1,h,w,c_a)),np.reshape(b[j,:,:,:],(1,h,w,c_b)))
+            if ret is None:
+                ret = ret_tmp
+            else:
+                ret = np.concatenate([ret,ret_tmp],axis=0)
         return ret
 
     @staticmethod

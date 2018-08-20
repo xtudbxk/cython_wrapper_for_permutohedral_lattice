@@ -1,2 +1,2 @@
-from . import image
+from . import myimage
 from .permutohedral_lattice import pyPermutohedralLattice
